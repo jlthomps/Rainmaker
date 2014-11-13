@@ -26,8 +26,8 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
     diffobj$tipdiff <- ifelse(diffobj$tipdiff<0,0,diffobj$tipdiff)
     diffobj <- rbind(NA,diffobj)
     dfT <- cbind(df,diffobj)
-    dfT$meanTr <- dfT$tipdiff/as.numeric(dfT$minutes)
-    dfT$VperTip <- (x2Coef*(dfT$meanTr^2))+(xCoef*dfT$meanTr)+bCoef
+    #dfT$meanTr <- dfT$tipdiff/as.numeric(dfT$minutes)
+    dfT$VperTip <- (x2Coef*(dfT$tipdiff^2))+(xCoef*dfT$tipdiff)+bCoef
     dfT$Vol <- dfT$VperTip*dfT$tipdiff
     volume="Vol"
   
@@ -39,6 +39,7 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
   stormnum <- 0
   continue.dry <- TRUE
   sumrain <- 0
+  numTips <- 0
   
   # Loop through rain data and define event periods
   for (i in 2:nrow(dfT)) {
@@ -75,16 +76,19 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
             current.storm <- data.frame(stormnum=stormnum,
                                         StartDate=dfT[StartRow,time],
                                         EndDate=dfT[EndRow,time],
-                                        volume=sumrain)
+                                        volume=sumrain,
+                                        tips=numTips)
             dry <- TRUE
             if(stormnum>1) storms <- rbind(storms,current.storm)
             else storms <- current.storm        
             sumrain <- 0
+            numTips <- 0
           }
         }
       }
       if (dfT[i,tips]!=0) {
         sumrain <- sumrain + dfT[i,volume]
+        numTips <- numTips + dfT[i,tips]
         EndRow <- i
         StartDryRow <- EndRow
         continue.dry <- FALSE

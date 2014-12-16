@@ -24,6 +24,7 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
     colnames(diffobj) <- c("minutes","tipdiff")
     units(diffobj$minutes) <- "mins"
     diffobj$tipdiff <- ifelse(diffobj$tipdiff<0,0,diffobj$tipdiff)
+    tipdiff="tipdiff"
     diffobj <- rbind(NA,diffobj)
     dfT <- cbind(df,diffobj)
     #dfT$meanTr <- dfT$tipdiff/as.numeric(dfT$minutes)
@@ -50,9 +51,9 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
     if(dry) {
       
       # Event initiation
-      if(dfT[i,tips]>0) {  
+      if(dfT[i,tipdiff]>0) {  
         dry=FALSE
-        StartRow <- i-1
+        StartRow <- i
       }
     }
     # Define event period

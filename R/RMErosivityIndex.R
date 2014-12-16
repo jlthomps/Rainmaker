@@ -39,10 +39,11 @@ RMErosivityIndex <- function(df,storm_rainmaker)
   
   intensity_agg <- aggregate(intensity_all$energy,list(intensity_all$stormnum),sum)
   storm_rainmaker <- merge(storm_rainmaker,intensity_agg,by.x="stormnum",by.y="Group.1",all.x=TRUE)
-  storm_rainmaker[which(storm_rainmaker$I30<=2.5),]$x <- storm_rainmaker[which(storm_rainmaker$I30<2.5),]$I30*storm_rainmaker[which(storm_rainmaker$I30<2.5),]$x*.01
-  storm_rainmaker$x <- ifelse(storm_rainmaker$I30<=0,NA,storm_rainmaker$x)
-  storm_rainmaker$x <- ifelse(storm_rainmaker$I30>2.5,storm_rainmaker$x*2.5*.01,storm_rainmaker$x)
-  colnames(storm_rainmaker)[colnames(storm_rainmaker)=="x"] <- "EI"
+  storm_rainmaker$ei <- storm_rainmaker$I30*storm_rainmaker$x*.01
+  #storm_rainmaker[which(storm_rainmaker$I30<=2.5),]$x <- storm_rainmaker[which(storm_rainmaker$I30<2.5),]$I30*storm_rainmaker[which(storm_rainmaker$I30<2.5),]$x*.01
+  storm_rainmaker$ei <- ifelse(storm_rainmaker$I30<=0,NA,storm_rainmaker$ei)
+  storm_rainmaker$ei <- ifelse(storm_rainmaker$I30>2.5,storm_rainmaker$x*2.5*.01,storm_rainmaker$ei)
+  #colnames(storm_rainmaker)[colnames(storm_rainmaker)=="x"] <- "EI"
   
   return(storm_rainmaker)
 }

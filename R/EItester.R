@@ -11,6 +11,7 @@ df <- adaps_precip_in[,c(5,3)]
 df <- df[!duplicated(df),]
 colnames(df) <- c("rain","pdate")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMErosivityIndex.R")
+source("/Users/jlthomps/GLRIBMPs/RMErosivityIndex.R")
 # choose desired dry interval between storms
 stormInt <- 1.8
 # choose desired rain amount threshold, in units of precip values

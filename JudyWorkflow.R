@@ -1,5 +1,5 @@
 library(googleVis)
-source("C:/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMeventsBuckets.R")
+source("/Users/jlthomps/RainmakerJLT/R/RMeventsBuckets.R")
 #source("C:/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMIntenseBuckets.R")
 
 swaletop <- read.table(file="swaletopuv2.rdb",header=TRUE,sep="\t",comment.char="#",stringsAsFactors=FALSE,colClasses="character")

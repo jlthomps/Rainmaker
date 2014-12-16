@@ -2,7 +2,7 @@ library(googleVis)
 source("C:/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMeventsBuckets.R")
 #source("C:/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMIntenseBuckets.R")
 
-swaletop <- read.table(file="swaletopuv2.rdb",header=TRUE,sep="\t",comment.char="#",stringsAsFactors=FALSE,colClasses="character")
+swaletop <- read.table(file="swaletopuv.rdb",header=TRUE,sep="\t",comment.char="#",stringsAsFactors=FALSE,colClasses="character")
 swaletop$pdate <- strptime(as.character(paste(swaletop$DATE,swaletop$TIME,sep=" ")),format="%Y%m%d %H%M%S")
 swaletop$tips <- as.numeric(swaletop$VALUE)
 
@@ -36,8 +36,8 @@ write.table(swaletopStorms, fileToSave, row.names=FALSE, sep=",")
 
 library(dataRetrieval)
 precipSite <- '430356089183502'
-precipData <- retrieveNWISdvData(precipSite,'00045','2014-06-01','2014-09-21',statCd='00006')
-precip_data <- precipData[precipData$datetime<=max(as.Date(swaletop$pdate)),]
+precipData <- getNWISdvData(precipSite,'00045','2014-06-01','2014-09-21',statCd='00006')
+precip_data <- precipData[precipData$dateTime<=max(as.Date(swaletop$pdate)),]
 
 #interactive Google chart
 events <- unique(rbind(swaletopStorms[,c(2:3)],swalebotStorms[,c(2:3)],swalemidStorms[,c(2:3)]))
@@ -53,7 +53,7 @@ names(bot_data) <- c("datetime","value","name","label")
 event_data <- data.frame(events[,c("StartDate")],rep(20,nrow(events)),rep("Event",nrow(events)),rep(paste(events$StartDate,events$EndDate,sep=" "),nrow(events)),stringsAsFactors=FALSE)
 names(event_data) <- c("datetime","value","name","label")
 #event_data$datetime <- as.Date(event_data$datetime)
-precip_data <- data.frame(precip_data[,c("datetime","X06_00045_00006")],rep("Precip",nrow(precip_data)),rep(NA,nrow(precip_data)),stringsAsFactors=FALSE)
+precip_data <- data.frame(precip_data[,c("dateTime","X_00045_00006")],rep("Precip",nrow(precip_data)),rep(NA,nrow(precip_data)),stringsAsFactors=FALSE)
 names(precip_data) <- c("datetime","value","name","label")
 tzone <- unclass(top_data$datetime[1]$zone)
 precip_data$datetime <- as.POSIXct(precip_data$datetime,tz=tzone)

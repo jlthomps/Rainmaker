@@ -38,11 +38,13 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
   dry <- TRUE
   stormnum <- 0
   continue.dry <- TRUE
+  first.dry <- TRUE
   sumrain <- 0
   numTips <- 0
+  tipdiff="tipdiff"
   
   # Loop through rain data and define event periods
-  for (i in 2:nrow(dfT)) {
+  for (i in 3:nrow(dfT)) {
     
     # During dry period, look for start of event
     if(dry) {
@@ -57,7 +59,7 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
     if(!dry) {
       
       # Search for end of event period
-      if(dfT[i,tips]==0) {
+      if(dfT[i,tipdiff]==0) {
         if(!continue.dry){
           continue.dry <- TRUE
           dryduration <- difftime(dfT[i,time],
@@ -68,13 +70,16 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
         # Continue checking for end of event (dry duration >= interevent period)
         if(continue.dry){                   
           dryduration <- difftime(dfT[i,time],dfT[StartDryRow,time],units="secs")
-          if(dryduration >= ieSec) {
-            EndRow <- StartDryRow
-            stormnum <- stormnum + 1
+          if (!first.dry){
+            if(dryduration >= ieSec) {
+              
+              first.dry <- TRUE
+              EndRow <- StartDryRow
+              stormnum <- stormnum + 1
             
             # After event period ends, save start and end dates/times and rain depth
             current.storm <- data.frame(stormnum=stormnum,
-                                        StartDate=dfT[StartRow,time],
+                                        StartDate=dfT[StartRow+1,time],
                                         EndDate=dfT[EndRow,time],
                                         volume=sumrain,
                                         tips=numTips)
@@ -84,18 +89,21 @@ RMeventsBuckets <- function(df,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=0,
             sumrain <- 0
             numTips <- 0
           }
-        }
+        }}
       }
-      if (dfT[i,tips]!=0) {
+      if (dfT[i,tipdiff]!=0) {
         sumrain <- sumrain + dfT[i,volume]
-        numTips <- numTips + dfT[i,tips]
+        numTips <- numTips + dfT[i,tipdiff]
         EndRow <- i
         StartDryRow <- EndRow
         continue.dry <- FALSE
+        first.dry <- FALSE
       }
     }
   }
   } 
-  
+  storms$duration <- abs(as.numeric(difftime(storms[,2],storms[,3],units="secs")))
+  storms$VolperTip <- storms$volume/storms$tips
+  #storms <- storms[which(storms$duration>ieSec),]
   return(storms)
 }

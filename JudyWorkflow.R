@@ -1,12 +1,15 @@
 library(googleVis)
-source("/Users/jlthomps/RainmakerJLT/R/RMeventsBuckets.R")
-#source("C:/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMIntenseBuckets.R")
+source("/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMeventsBuckets.R")
+source("/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMeventsBucketsln.R")
 
-swaletop <- read.table(file="swaletopuv.rdb",header=TRUE,sep="\t",comment.char="#",stringsAsFactors=FALSE,colClasses="character")
+#source("C:/Users/jlthomps/Desktop/git/RainmakerJLT/R/RMIntenseBuckets.R")
+setwd("/Users/jlthomps/Desktop/git/RainmakerJLT")
+swaletop <- read.table(file="swaletopuv2.rdb",header=TRUE,sep="\t",comment.char="#",stringsAsFactors=FALSE,colClasses="character")
 swaletop$pdate <- strptime(as.character(paste(swaletop$DATE,swaletop$TIME,sep=" ")),format="%Y%m%d %H%M%S")
 swaletop$tips <- as.numeric(swaletop$VALUE)
 
 swaletopStorms <- RMeventsBuckets(swaletop,ieHr=6,tips="tips",time="pdate",x2Coef=-.8577,xCoef=12.517,bCoef=450.11)
+swaletopStormsln <- RMeventsBucketsln(swaletop,ieHr=6,tips="tips",time="pdate",x2Coef=0,xCoef=20.415,bCoef=467.36)
 #swaletopIntense <- RMIntenseBuckets(swaletop,date="pdate",tips = "tips",swaletopStorms,sdate="StartDate",edate="EndDate",xmin=c(5,15,60,180),x2Coef=-.8577,xCoef=12.517,bCoef=450.11)
 
 swalemid <- read.table(file="swalemiduv2.rdb",header=TRUE,sep="\t",comment.char="#",stringsAsFactors=FALSE,colClasses="character")
